@@ -18,7 +18,15 @@ A social media adventure game built on the Mastodon platform. Dive into a dynami
 
 2. Navigate to the project directory:
 
-3. Install the required packages (assuming you have a `requirements.txt`):
+3. Install the required packages
+
+pip install -r requirements.txt
+
+4. Set up the environment variables. Copy the `.env.example` to `.env` and fill in the required details.
+
+5. Run the game:
+python main.py
+
 
 ## Contributing
 
