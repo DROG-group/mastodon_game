@@ -1,3 +1,6 @@
+# This module defines the Story model, representing narrative elements, 
+# challenges, or sequences that users and bots can engage with.
+
 from sqlalchemy import Column, Integer, String
 from .database import Base
 

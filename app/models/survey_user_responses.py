@@ -1,3 +1,7 @@
+# This module defines the SurveyUserResponses model, 
+# capturing the answers or responses given by users to survey questions.
+
+
 from sqlalchemy import Column, Integer, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base

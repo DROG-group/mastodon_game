@@ -1,3 +1,6 @@
+# This module defines the SurveyQuestion model, 
+# representing questions that are posed to users as part of surveys or quizzes.
+
 from .database import Base
 from sqlalchemy import Column, Integer, String, Text
 

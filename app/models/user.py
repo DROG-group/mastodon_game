@@ -1,3 +1,6 @@
+# This module defines the User model, representing human players or participants in the game, 
+# including their attributes, scores, and statuses. 
+
 from sqlalchemy import Column, Integer, String
 from .database import Base
 

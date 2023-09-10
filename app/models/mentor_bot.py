@@ -1,3 +1,6 @@
+# This module defines the MentorBot model, 
+# a specialized type of bot that guides and assists users throughout the game.
+
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
 from .database import Base
 from .command import Command
