@@ -9,9 +9,6 @@ A social media adventure game built on the Mastodon platform. Dive into a dynami
 - Customizable game scenarios and story arcs.
 - Robust error handling and logging.
 
-## Directory Structure
-
-
 ## Setup
 
 1. Clone the repository:
