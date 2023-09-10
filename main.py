@@ -5,7 +5,7 @@ def main():
     # Initialization or setup code
     print("Mastodon Game Initializing...")
 
-    # Hand over to the primary game logic
+    # Hand over to the primary games logic
     game_logic.run()
 
 if __name__ == "__main__":
