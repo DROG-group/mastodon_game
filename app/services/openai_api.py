@@ -3,7 +3,7 @@
 # and provides a more Pythonic interface.
 
 import openai
-from mastodon_game.config import current_config
+from config import current_config
 
 # Set the OpenAI API key
 openai.api_key = current_config.OPENAI_API_KEY
