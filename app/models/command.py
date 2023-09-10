@@ -1,3 +1,7 @@
+# This module defines the Slash Command model, 
+# representing the various slash commands that bots 
+# and users can execute within the game.
+
 class Command:
     # Dictionary of commands and their corresponding methods
     commands = {

@@ -1,3 +1,7 @@
+# This service acts as an intermediary between the MentorBot model and the rest of the application. 
+# It contains methods that handle the business logic related to the mentor bot, such as processing 
+# user input, interacting with the database, and invoking the appropriate commands.
+
 from app.models import MentorBot, Command
 from app.models.database import SessionLocal
 

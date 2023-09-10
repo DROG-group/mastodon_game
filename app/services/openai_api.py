@@ -1,3 +1,7 @@
+# This is a wrapper around the OpenAI API. It contains functions to interact with OpenAI's GPT models, 
+# generating content based on prompts, etc. Like the Mastodon API wrapper, it abstracts the API calls 
+# and provides a more Pythonic interface.
+
 import openai
 from mastodon_game.config import current_config
 

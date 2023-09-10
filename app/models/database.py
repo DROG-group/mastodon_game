@@ -1,3 +1,6 @@
+# This module sets up the database connection and provides utilities 
+# for database operations.
+
 import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine

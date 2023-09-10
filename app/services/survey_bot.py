@@ -1,3 +1,7 @@
+# This service manages the survey bot's functionalities. It can send survey questions to users, 
+# collect and store their responses, analyze survey data, and more. It might also contain logic 
+# to decide when to send surveys, how to handle incomplete surveys, etc.
+
 from app.models.survey_question import SurveyQuestion
 from app.models.survey_user_responses import SurveyUserResponse
 from app.models.database import SessionLocal

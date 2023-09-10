@@ -1,3 +1,6 @@
+# This file contains the primary game loop and logic. It's where the main game flow is controlled, 
+# and it coordinates the various services and models to create the game experience.
+
 import time
 
 def run():

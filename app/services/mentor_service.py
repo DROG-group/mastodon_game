@@ -1,3 +1,7 @@
+# This service might handle more general mentor-related functionalities that aren't specific to the bot. 
+# For example, it could manage mentor assignments, track mentor performance, or handle mentor-related 
+# events in the game.
+
 from app.models import MentorBot
 
 mentor_bot = MentorBot()

@@ -1,13 +1,32 @@
 import os
+from dotenv import load_dotenv
+from config import development, production
+
+# Load the .env file
+load_dotenv()
 
 # Determine the environment (default to development if not specified)
-env = os.environ.get('MASTODON_GAME_ENV', 'development').capitalize()
+env = os.environ.get('MASTODON_GAME_ENV', 'development')
 
-# Dynamically import the configuration based on the environment
-current_config_module = __import__(f"mastodon_game.config.{env.lower()}", fromlist=[env])
+# Dynamically get the configuration based on the environment
+current_config = getattr(config, env)
 
-# Set the current configuration
-current_config = getattr(current_config_module, env)
+# Fetch database credentials
+DB_NAME = os.getenv("DB_NAME", default=current_config.DB_NAME)
+DB_USER = os.getenv("DB_USER", default=current_config.DB_USER)
+DB_PASSWORD = os.getenv("DB_PASSWORD", default=current_config.DB_PASSWORD)
+DB_HOST = os.getenv("DB_HOST", default=current_config.DB_HOST)
 
-# If you want to directly access the DATABASE_CONFIG from here, you can do:
-DATABASE_CONFIG = current_config.DATABASE_CONFIG
+# Construct the DATABASE_URL
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_NAME}"
+
+# Database configuration
+DATABASE_CONFIG = {
+    'dbname': DB_NAME,
+    'user': DB_USER,
+    'password': DB_PASSWORD,
+    'host': DB_HOST
+}
+
+# Fetch OpenAI API Key
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')

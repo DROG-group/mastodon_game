@@ -1,3 +1,7 @@
+# This module provides functions to handle errors gracefully. 
+# Instead of crashing the application, errors can be logged, 
+# and appropriate responses can be returned to the user or system.
+
 from .logging import setup_logging
 from .exceptions import MastodonGameError
 
