@@ -18,15 +18,16 @@ A social media adventure game built on the Mastodon platform. Dive into a dynami
 3. Install the required packages
 
 pip install -r requirements.txt
+4. Change the API throttle limit
 
-4. Set up the environment variables. Copy the `.env.example` to `.env` and fill in the required details.
+sed -i 's/limit: 100/limit: 10000/g' /path/to/mastodon/config/initializers/rack_attack.rb
+5. Set up the environment variables. Copy the `.env.example` to `.env` and fill in the required details.
 
-5. Run the game:
+6. Run the game:
 python main.py
 
 
 ## Contributing
-
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
