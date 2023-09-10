@@ -1,3 +1,6 @@
+# This file initializes the `tests` directory as a Python package. 
+# It can also be used to set up any common test fixtures or configurations.
+
 import unittest
 
 # This is a common setup that will be executed before any test in this package

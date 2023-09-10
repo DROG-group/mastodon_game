@@ -2,7 +2,6 @@
 # These can include fixed values, configuration settings, 
 # or any other data that doesn't change during the application's runtime.
 
-Copy code
 # Constants for game logic
 MAX_PLAYERS = 100
 MIN_PLAYERS = 2

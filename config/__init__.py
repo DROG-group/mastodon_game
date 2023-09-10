@@ -1,3 +1,6 @@
+# This file initializes the `config` directory as a Python package. 
+# It also dynamically loads the appropriate configuration based on the environment setting.
+
 import os
 from dotenv import load_dotenv
 from config import development, production

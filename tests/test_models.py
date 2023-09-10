@@ -1,3 +1,6 @@
+# This file contains unit tests for the models in the application.
+# It tests the functionality and integrity of database models, ensuring data consistency and validation.
+
 import unittest
 from app.models import Bot, User
 

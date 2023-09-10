@@ -1,3 +1,6 @@
+# This file contains unit tests for the services in the application.
+# It tests the core functionality provided by service layers, ensuring that business logic is correctly implemented.
+
 import unittest
 from app.services import game_logic
 

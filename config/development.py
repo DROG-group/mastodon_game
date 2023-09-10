@@ -1,3 +1,7 @@
+# This file contains configurations specific to the development environment.
+# It includes settings like database connection details, 
+# API keys, and other development-specific configurations.
+
 import os
 from dotenv import load_dotenv
 from config import development
