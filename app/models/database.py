@@ -1,8 +1,11 @@
 import os
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from .user import Base
 from config import development
 
-# Load the .env file
+# Load environment variables
 load_dotenv()
 
 # Fetch database credentials
@@ -14,13 +17,10 @@ DB_HOST = os.getenv("DB_HOST", default=development.DB_HOST)
 # Construct the DATABASE_URL
 DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_NAME}"
 
-# Database configuration
-DATABASE_CONFIG = {
-    'dbname': DB_NAME,
-    'user': DB_USER,
-    'password': DB_PASSWORD,
-    'host': DB_HOST
-}
+# Initialize database engine and session
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
 
-# Fetch OpenAI API Key
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+def init_db():
+    """Initialize the database."""
+    Base.metadata.create_all(bind=engine)

@@ -1,13 +1,9 @@
-class User:
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password = password
+from sqlalchemy import Column, Integer, String
+from .database import Base
 
-    def login(self):
-        # Logic to log in
-        pass
+class User(Base):
+    __tablename__ = "users"
 
-    def complete_event(self, event):
-        # Logic to complete an event
-        pass
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    # Add other attributes and methods for the user

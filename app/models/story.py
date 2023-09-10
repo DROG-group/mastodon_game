@@ -1,8 +1,9 @@
-class Story:
-    def __init__(self, title, chapters):
-        self.title = title
-        self.chapters = chapters  # List of chapters or events
+from sqlalchemy import Column, Integer, String
+from .database import Base
 
-    def start(self):
-        # Logic to start the story
-        pass
+class Story(Base):
+    __tablename__ = "stories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    plot = Column(String, index=True)
+    # Add other attributes and methods for the story
