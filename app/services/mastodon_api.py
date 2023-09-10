@@ -7,8 +7,8 @@ from config import current_config
 
 # Create a Mastodon API client instance
 mastodon = Mastodon(
-    access_token=config.MASTODON_ACCESS_TOKEN,
-    api_base_url=config.MASTODON_API_BASE_URL
+    access_token=current_config.MASTODON_ACCESS_TOKEN,
+    api_base_url=current_config.MASTODON_API_BASE_URL
 )
 
 def post_toot(content):

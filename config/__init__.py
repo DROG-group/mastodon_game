@@ -3,7 +3,7 @@
 
 import os
 from dotenv import load_dotenv
-from config import development, production
+import config  # Import the config module
 
 # Load the .env file
 load_dotenv()
