@@ -1,2 +1,4 @@
 .env
 venv/
+all_code.txt
+.DS_Store
