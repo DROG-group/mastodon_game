@@ -8,10 +8,11 @@ from config import current_config
 # Set the OpenAI API key
 openai.api_key = current_config.OPENAI_API_KEY
 
-def generate_content(prompt):
+def generate_content(prompt, model="gpt-3.5-turbo", max_tokens=150, temperature=0.7):
     response = openai.Completion.create(
-      model="gpt-3.5-turbo",
+      model=model,
       prompt=prompt,
-      max_tokens=150
+      max_tokens=max_tokens,
+      temperature=temperature
     )
     return response.choices[0].text.strip()
