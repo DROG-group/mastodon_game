@@ -8,3 +8,6 @@ app/models/__pycache__/bot.cpython-311.pyc
 app/models/__pycache__/database.cpython-311.pyc
 app/models/__pycache__/user.cpython-311.pyc
 app/__pycache__/__init__.cpython-311.pyc
+tests/__pycache__/test_services.cpython-311.pyc
+.vscode/settings.json
+.gitignore
