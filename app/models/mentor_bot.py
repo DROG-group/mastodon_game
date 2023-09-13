@@ -5,6 +5,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
 from .database import Base
 from .command import Command
 
+#
+
 class MentorBot(Base):
     __tablename__ = "mentor_bots"
 

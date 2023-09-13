@@ -11,3 +11,5 @@ app/__pycache__/__init__.cpython-311.pyc
 tests/__pycache__/test_services.cpython-311.pyc
 .vscode/settings.json
 .gitignore
+tests/__pycache__/test_models.cpython-311.pyc
+tests/__pycache__/test_utils.cpython-311.pyc
