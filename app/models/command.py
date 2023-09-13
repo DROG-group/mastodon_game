@@ -2,6 +2,14 @@
 # representing the various slash commands that bots 
 # and users can execute within the game.
 
+# Assuming you're using gettext for i18n
+import gettext
+
+# Initialize gettext (this is a basic setup; you might need to adjust paths and domain)
+gettext.bindtextdomain('myapp', 'locale')
+gettext.textdomain('myapp')
+_ = gettext.gettext
+
 class Command:
     # Dictionary of commands and their corresponding methods
     commands = {
@@ -22,15 +30,16 @@ class Command:
             method = getattr(cls, method_name)
             return method(user_id)
         else:
-            return "Unknown command. Type /help for a list of available commands."
+            return _("Unknown command. Type /help for a list of available commands.")
 
     @staticmethod
     def start(user_id):
-        return f"Welcome, {user_id}! This is the Mastodon Game. Your objective is..."
+        return _("Welcome, {user_id}! This is the Mastodon Game. Your objective is...").format(user_id=user_id)
 
     @staticmethod
     def help(user_id):
-        help_text = """
+        help_text = _(
+        """
         Here are the available commands:
         /start - Start the game and get an introduction.
         /leaderboard - See the top players.
@@ -38,20 +47,21 @@ class Command:
         /profile - View your game profile.
         /feedback - Provide feedback or report issues.
         """
+        )
         return help_text
 
     @staticmethod
     def leaderboard(user_id):
-        return "Top players: ..."
+        return _("Top players: ...")
 
     @staticmethod
     def hints(user_id):
-        return "Here's a hint for your current challenge..."
+        return _("Here's a hint for your current challenge...")
 
     @staticmethod
     def profile(user_id):
-        return f"{user_id}'s profile: ..."
+        return _("{user_id}'s profile: ...").format(user_id=user_id)
 
     @staticmethod
     def feedback(user_id):
-        return "Thank you for your feedback! We'll look into it."
+        return _("Thank you for your feedback! We'll look into it.")
