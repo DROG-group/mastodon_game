@@ -3,13 +3,8 @@ venv/
 all_code.txt
 .DS_Store
 .DS_Store
-app/models/__pycache__/__init__.cpython-311.pyc
-app/models/__pycache__/bot.cpython-311.pyc
-app/models/__pycache__/database.cpython-311.pyc
-app/models/__pycache__/user.cpython-311.pyc
-app/__pycache__/__init__.cpython-311.pyc
-tests/__pycache__/test_services.cpython-311.pyc
-.vscode/settings.json
+app/models/__pycache__/
+app/__pycache__
+tests/__pycache__/
+.vscode/
 .gitignore
-tests/__pycache__/test_models.cpython-311.pyc
-tests/__pycache__/test_utils.cpython-311.pyc
