@@ -1,8 +1,30 @@
-# Provides services and operations related to the User model.
-# Includes CRUD operations, authentication, preferences, scoring, and more.
+"""
+user_service.py
+
+This module provides services and operations related to the User model. It offers a suite of functionalities to
+manage user data, including CRUD operations, authentication mechanisms, user preferences management, scoring updates,
+and leaderboard generation.
+
+Dependencies:
+    - app.models: Access to the User model definition.
+    - app.database: Access to the database session.
+
+Functions:
+    - create_user(username): Adds a new user to the database.
+    - get_user_by_id(user_id): Retrieves user details by their ID.
+    - update_username(user_id, new_username): Updates a user's username.
+    - delete_user(user_id): Removes a user from the database.
+    - get_user_by_username(username): Retrieves user details by username.
+    - authenticate_user(username, password): Authenticates a user based on their username and password.
+    - set_user_preference(user_id, preference_key, preference_value): Sets a user's preference.
+    - get_user_preference(user_id, preference_key): Retrieves a user's preference by key.
+    - update_user_score(user_id, score_increment): Updates a user's score.
+    - get_leaderboard(limit): Retrieves the top users based on their scores.
+
+"""
 
 from app.models import User
-from app.database import SessionLocal as Session  # Renaming for clarity in the service
+from app.models.database import SessionLocal as Session  # Renaming for clarity in the service
 
 def create_user(username):
     """Add a new user to the database."""
