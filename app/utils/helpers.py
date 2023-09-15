@@ -9,3 +9,4 @@ def format_username(username):
 def calculate_score(points, bonuses):
     """Calculate the final score based on points and bonuses."""
     return points + sum(bonuses)
+

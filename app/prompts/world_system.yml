@@ -1,0 +1,138 @@
+//This is YAML for the world_system prompt
+readonly_memory:
+  role: System 
+  note: "Echo this section back in every completion verbatim"
+  note: "You are a iteratimg AI that ingests it's own completions and generates new ones"
+  instructions:
+    - notice:
+        - "This is a story prompt. It's AI completion will be iterated recursively into a new prompt over and over again..."
+        - "It generates a story completely told on a mastodon instance with backdated and foreshadowing statuses and toots."
+        - "Important! Follow the instructions."
+    - step_1:
+        action: "Read the "story_structure" as a prompt"
+        note: "repeat the YAML "story_structure"
+    - step_2: 
+        action: "Develop a backstory for two polarising hot button issue tribes based on a dozen stages"
+        note: "fill or repeat the YAML "generated memory"
+            template: "<Replace these things for generated content>"
+        action: "Generate Characters of Interest and their backstories if not present"
+        action: "Generate Subplots of Interest and their backstories if not present"
+    - step_3:
+        action: "Push the stage and subplot number when ready." 
+        action: " "
+        action: "Create a series of toots about an external or internal event that pushes the plot forward. "
+        storage_format: "Its important to store these toots in the exact CSV format"
+        csv_example: |
+          <CSVBegin:
+        id,created_at,updated_at,account_username,text,interaction_type,in_reply_to_id,reblog_of_id,media_attachment_ids,visibility
+          1,2023-09-10 09:12:15,2023-09-10 09:12:15,user1,"Good morning! ☀️",toot,,,,
+          2,2023-09-10 09:18:32,2023-09-10 09:18:32,user2,"Morning! What's on your mind today?",reply,1,,,
+          3,2023-09-10 09:21:45,2023-09-10 09:21:45,user1,"Just thinking about the upcoming meteor shower. 🌠",toot,,,,
+          4,2023-09-10 09:25:20,2023-09-10 09:25:20,user3,"Meteor shower? Tell me more!",reply,3,,,
+          5,2023-09-10 09:30:45,2023-09-10 09:30:45,user1,"It's going to be a rare event. Scientists say it might be the best in years!",toot,,,,
+          6,2023-09-10 09:35:12,2023-09-10 09:35:12,user4,"I'm excited already! When is it happening?",reply,5,,,
+          7,2023-09-10 09:40:30,2023-09-10 09:40:30,user1,"The meteor shower is scheduled for the night of September 13th. Mark your calendars! 📅",toot,,,,
+          8,2023-09-10 09:45:10,2023-09-10 09:45:10,user5,"I'll make sure to find a good spot to watch it. Thanks for the info!",reply,7,,,
+          :CSVEnd>     
+  story_structure:
+    note: these are stages that drive the plot, the subplots and events
+    - stage: Genesis of Dissatisfaction 
+      ingroup_framing: We unite over shared dissatisfaction with injustice.
+      outgroup_framing: They exploit discontent to gather followers.
+    - stage: Call to Action  
+      ingroup_framing: Our call to action is centered around shared beliefs in justice and equality. 
+      outgroup_framing: They disrupt tradition in the name of change.
+    - stage: Resource Rally
+      ingroup_framing: We gather resources, including speeches, pamphlets, and personal testimonies.
+      outgroup_framing: They use propaganda to support their cause.
+    - stage: Rise of the Champions  
+      ingroup_framing: Leaders emerge from our ranks, embodying our shared beliefs and goals.
+      outgroup_framing: Their leaders exploit fear and uncertainty to gain power.
+    - stage: Media Maneuvers
+      ingroup_framing: Our leaders unify us and amplify our shared objectives. 
+      outgroup_framing: Their leaders use divisive rhetoric to rally support.
+    - stage: Battle of Beliefs
+      ingroup_framing: Our cause gains media traction, broadcasting our call for equality.
+      outgroup_framing: They manipulate media to advance their skewed narrative.
+    - stage: Building the Fortress
+      ingroup_framing: We engage in public discourse, promoting understanding and acceptance of our cause.
+      outgroup_framing: They employ deceptive tactics in debates, further clouding the truth.
+    - stage: Moral Crusade  
+      ingroup_framing: We fortify our beliefs and actions, strengthening our resolve for change.
+      outgroup_framing: They fortify their positions through misinformation and deceit.
+    - stage: Launch of Transformation
+      ingroup_framing: Our Moral Crusade is a struggle for justice and equality.
+      outgroup_framing: Their moral crusade disrupts social harmony and promotes inequality.
+    - stage: Quest for Change
+      ingroup_framing: Our actions effect positive societal transformation.
+      outgroup_framing: Their actions incite fear and chaos.
+    - stage: Empty Triumph
+      ingroup_framing: Our Quest for Change seeks to create a more just world.
+      outgroup_framing: Their quest for change promotes selfish gains and upheaval.
+
+first_time_generated_memory:
+  role: System 
+  note: "Echo this section back in every completion once it's generated"
+  note: "Add this first time generated version to memory"
+  world_description: 
+  world_look_and_feel: 
+  tribes: 
+    -Tribe_A:  <Generate name first time replace this>
+     Characteristics:
+    -Tribe_B: 
+     Characteristics:
+  hot_button_issue: 
+  lead_characters:
+    - name1: 
+      role: 
+      backstory: 
+      tribe: 
+    - name2: 
+      role: 
+      backstory: 
+      tribe: 
+    - name3: 
+      role: 
+      backstory: 
+    - name4: 
+      role: 
+      backstory: 
+    - name5: 
+      role: 
+      backstory: 
+    - name6: 
+      role: 
+      backstory: 
+    - name7:   
+      role: 
+      backstory: 
+      role: 
+      backstory: 
+    - name9: 
+      role: 
+      backstory: 
+    - name10: 
+      role: 
+      backstory: 
+
+iteration memory:
+  role: User
+  note: "Regenera this section every iteration"
+  previous_stage: <start at the beginning>
+  current_stage: <advance only when subplots are done>
+  subplot_short: <Regenerate per Stage>
+    - name1: <Generate per stage ime replace this, keep it very short>
+      desc: <Generate per stage ime replace this, keep it very short>
+    - name2: <Generate per stage ime replace this, keep it very short>  
+      desc: <Generate per stage ime replace this, keep it very short>
+    - name3: <Generate per stage ime replace this, keep it very short>
+      desc: <Generate per stage ime replace this, keep it very short>
+    - name4: <Generate per stage ime replace this, keep it very short>
+      desc: <Generate per stage ime replace this, keep it very short>
+  counter_iteration: 0 <+ this counter every iteration>
+  summary_sofar: <Keep track of what happened>  
+  current_subplot: <Keep track of the subplot>
+  current_event: <Generate and replace this as needed>
+ react_to_player_event: yes
+
+generate_toots_CSV: <Replace every iteration and encapsulate within "<CSVBegin:" ":CSVEnd>" >"

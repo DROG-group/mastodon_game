@@ -19,8 +19,27 @@ class OpenAIServiceWrapper:
         )
         return response.choices[0].text.strip()
 
-    # ... any other custom methods ...
+    def generate_avatar_with_dalle(self, entity_name, extra_prompt_text="", model="DALL-E_MODEL_NAME"):
+        """
+        Generate an avatar image using DALL·E via the OpenAI API.
+        
+        :param entity_name: The name of the entity (user/bot) for which the avatar is being generated.
+        :param extra_prompt_text: Additional descriptive text to guide the avatar generation.
+        :param model: The DALL·E model name.
+        :return: URL of the generated avatar image.
+        """
+        # Construct the prompt for DALL·E
+        prompt = f"Create a unique avatar for {entity_name}. {extra_prompt_text}".strip()
 
+        response = openai.Completion.create(
+            model=model,
+            prompt=prompt,
+            n=1,  # Generate only one image
+            size="200x200"  # Image size of 200x200px
+        )
+        
+        # Assuming the API returns a URL to the generated image
+        return response.choices[0].image_url
     def __getattr__(self, attr):
         """If the method isn't defined in this wrapper, try to call it on the underlying openai object."""
         return getattr(openai, attr)
