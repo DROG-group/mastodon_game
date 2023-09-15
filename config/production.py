@@ -16,5 +16,8 @@ DATABASE_CONFIG = {
     'host': os.environ.get('DB_HOST')
 }
 
+# Configuration for Mastodon API interactions
+MASTODON_API_URL = "https://mastodon.example.com/api/v1/"
+
 # OpenAI API Key
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')

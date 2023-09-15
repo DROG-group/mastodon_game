@@ -1,10 +1,15 @@
-# This module contains constant values that are used throughout the application. 
-# These can include fixed values, configuration settings, 
-# or any other data that doesn't change during the application's runtime.
+"""
+Constants for Mastodon Game
+---------------------------
+
+This module contains constant values used throughout the Mastodon Game application. 
+These constants represent fixed values that do not change during the application's runtime.
+
+Constants:
+    - MAX_PLAYERS: Maximum number of players allowed in a game session.
+    - MIN_PLAYERS: Minimum number of players required to start a game session.
+"""
 
 # Constants for game logic
 MAX_PLAYERS = 100
 MIN_PLAYERS = 2
-
-# Constants for Mastodon API interactions
-MASTODON_API_URL = "https://mastodon.example.com/api/v1/"
