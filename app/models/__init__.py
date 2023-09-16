@@ -5,7 +5,7 @@
 # This file initializes the `models` directory as a Python package. 
 # It may also include any common imports or initializations required for the models.
 
-from .bot import Bot
+from .npc import Bot
 from .database import SessionLocal, init_db
 from .event import Event
 from .mentor_bot import MentorBot

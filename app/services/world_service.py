@@ -87,6 +87,7 @@ def extract_yaml_content(content):
         str: The extracted YAML content, or an empty string if the bookends are not found.
     """
     # Define bookends or markers to detect YAML content
+    # PROBLEM: YAMLBegin and YAMLEnd dont' work
     start_tag = "<YAMLBegin:"
     end_tag = ":YAMLEnd>"
     

@@ -1,0 +1,35 @@
+GenerateNever:
+  note: "This section should always be echoed back without any modifications."
+  Instructions:
+    note: "Echo this section back in every completion once it's generated."
+    content:
+      - "Step 1: Read and understand the structure of this YAML prompt."
+      - "Step 2: Always maintain the integrity of the ReadOnly section by echoing it back as-is."
+      - "Step 3: For GenerateOnce, generate content during the first iteration. Retain and echo this content in all subsequent iterations."
+      - "Step 4: Evaluate the condition in GenerateConditional. If met, generate content and echo in subsequent completions. If not met, continue the narrative."
+      - "Step 5: Always provide new content for the GenerateAlways section. This includes incrementing the iteration_counter and narrating the current adventure."
+      - "Step 6: Summarize the unfolding story in the StorySummary section, ensuring the summary does not exceed 250 words."
+      - "Step 7: Maintain coherence and consistency throughout the narrative. If the story starts to drift or become unclear, use the StorySummary to guide the narrative back on track."
+  Game:
+    world_context: "The world is divided into two main regions: the Sunlit Lands and the Shadow Realms."
+    main_character: "Alex, a young explorer from the Sunlit Lands, is curious about the mysteries of the Shadow Realms."
+
+GenerateOnce:
+  note: "Generate content for this section during the first iteration and echo the generated content in subsequent completions."
+  shadow_realm_description: "<Replace this only the first time. For example Describe the Shadow Realms in detail.>"
+  main_character_goal: "<Replace this only the first time. For example What is Alex's primary goal in exploring the Shadow Realms?>"
+
+GenerateConditional:
+  note: "Generate content based on the given condition. Echo the generated content in subsequent completions if the condition was met."
+  condition: "If the iteration_counter reaches 20 or the story goes off the rails some how you can write the 
+  word spelled F-A-L-S-E in the while_TRUE condition below. Do this also with errors"
+  while_TRUE: "TRUE"
+
+GenerateAlways:
+  note: "Generate new content for this section in every iteration."
+  iteration_counter: 1  # This counter should be incremented with each loop
+  StorySummary:
+    note: "Summarize the story so far in 250 words or less, ensuring continuity."
+    content: "<Replace this every iteration>"
+  Current_adventure: "<Replace this every iteration>"
+

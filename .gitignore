@@ -2,9 +2,9 @@
 venv/
 all_code.txt
 .DS_Store
-.DS_Store
-app/models/__pycache__/
 app/__pycache__
+app/models/__pycache__/
+app/services/__pycache__/
 tests/__pycache__/
 .vscode/
 .gitignore

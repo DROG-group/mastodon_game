@@ -47,7 +47,7 @@ This package serves as a foundation, ensuring organized and modular code for the
 """
 
 # ... [Your previously provided imports would follow here]
-from .models.bot import Bot
+from .models.npc import Bot
 from .models.command import Command
 from .models.database import Database
 from .models.event import Event
@@ -60,7 +60,7 @@ from .models.user import User
 from .models.world import World
 
 # Importing service modules responsible for the primary game operations
-from .services.bot_service import BotService
+from .services.npc_service import BotService
 from .services.event_service import EventService
 from .services.game_logic import GameLogic
 from .services.mastodon_api import MastodonAPI

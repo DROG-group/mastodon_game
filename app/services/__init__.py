@@ -26,7 +26,7 @@ from .mentor_bot_service import MentorBotService
 from .mentor_service import MentorService
 from .openai_api import OpenAIApiService
 from .survey_bot import SurveyBotService
-from .bot_service import BotService
+from .npc_service import BotService
 from .event_service import EventService
 from .status_import_service import StatusImportService
 from .user_service import UserService
