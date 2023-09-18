@@ -65,7 +65,6 @@ from .services.event_service import EventService
 from .services.game_logic import GameLogic
 from .services.mastodon_api import MastodonAPI
 from .services.mentor_npc_service import MentornpcService
-from .services.mentor_service import MentorService
 from .services.openai_api import OpenAI_API
 from .services.status_import_service import StatusImportService
 from .services.survey_npc_service import Surveynpc
