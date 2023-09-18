@@ -1,0 +1,54 @@
+import csv
+import psycopg2
+
+'''
+Overview:
+Script to insert data from a CSV file into Mastodon's database.
+
+Functions:
+
+push_data_to_db(row, cur):
+
+Parameters:
+row: Data row from the CSV.
+cur: Database cursor.
+Description: Inserts a single row of data into Mastodon's database. Uses a CTE to check if a user exists, creates a new account if not, and then inserts a status.
+insert_mastodon_data_from_csv(csv_path, db_config):
+
+Parameters:
+csv_path: Path to the CSV file.
+db_config: Database configuration dictionary.
+Description: Connects to the database, reads the CSV file, and inserts each row using push_data_to_db.
+Usage:
+
+Set up the database configuration.
+Call insert_mastodon_data_from_csv with the path to your CSV file and the database configuration.
+Note: Direct database manipulation can bypass application-level checks and validations. Use with caution.
+'''
+
+def push_data_to_db(row, cur):
+    # SQL CTE to insert data
+    sql = """
+    WITH user_check AS (SELECT id AS account_ID FROM accounts WHERE username = %(account_username)s),
+    new_account AS (INSERT INTO accounts (username, created_at, updated_at) VALUES (%(account_username)s, %(created_at)s, %(updated_at)s) WHERE NOT EXISTS (SELECT 1 FROM user_check) RETURNING id AS account_ID),
+    new_status AS (INSERT INTO statuses (account_id, text, created_at, updated_at, in_reply_to_id, reblog_of_id, visibility) VALUES (COALESCE((SELECT account_ID FROM new_account), (SELECT account_ID FROM user_check)), %(text)s, %(created_at)s, %(updated_at)s, %(in_reply_to_id)s, %(reblog_of_id)s, %(visibility)s) RETURNING id AS status_id)
+    SELECT status_id FROM new_status;
+    """
+    # Execute the SQL
+    cur.execute(sql, row)
+
+def insert_mastodon_data_from_csv(csv_path, db_config):
+    # Connect to the database
+    conn = psycopg2.connect(**db_config)
+    cur = conn.cursor()
+
+    # Read the CSV
+    with open(csv_path, 'r') as csv_file:
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            push_data_to_db(row, cur)
+            conn.commit()
+
+    # Close the database connection
+    cur.close()
+   

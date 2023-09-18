@@ -1,0 +1,75 @@
+from mastodon import Mastodon
+import psycopg2
+from datetime import datetime
+from faker import Faker
+
+fake = Faker(['az_AZ', 'cs_CZ', 'da_DK', 'de_AT', 'de_CH', 'de_DE', 'el_GR', 'en_AU', 'en_CA', 'en_GB', 'en_IE', 'en_IN', 'en_NZ', 'en_PH', 'en_US', 'es_CO', 'es_ES', 'es_MX', 'fa_IR', 'fi_FI', 'fil_PH', 'fr_CH', 'fr_FR', 'he_IL', 'hi_IN', 'hr_HR', 'hu_HU', 'hy_AM', 'id_ID', 'it_IT', 'ja_JP', 'ka_GE', 'ko_KR', 'ne_NP', 'nl_BE', 'nl_NL', 'no_NO', 'pl_PL', 'pt_BR', 'pt_PT', 'ro_RO', 'ru_RU', 'sk_SK', 'sl_SI', 'sv_SE', 'ta_IN', 'th_TH', 'tl_PH', 'uk_UA', 'zh_CN', 'zh_TW'], use_weighting=False)
+
+#mastodon = Mastodon(
+#    client_id = 'pytooter_clientcred.secret',
+#    api_base_url = 'https://mastodon.xn--sft219bi3tzwd.com'
+#)
+
+#mastodon.log_in(
+#    'bram@xn--sft219bi3tzwd.com',
+#    'tye-enx8tgm5GZA5vhm',
+#    to_file = 'pytooter_usercred.secret'
+#)
+
+mastodon = Mastodon(
+    access_token = 'pytooter_usercred.secret',
+    api_base_url = 'https://mastodon.xn--sft219bi3tzwd.com'
+)
+
+#print(mastodon.search('harry*'))
+#print(mastodon.account('107928996573424951'))
+
+#mastodon.update_credentials()
+
+
+conn = psycopg2.connect(host="192.168.1.50", database="mastodon_production", user="mastodon", password='NFd2Un1pi7mVD4SjXjkFY3wusLoGP8')
+conn.autocommit = True
+cursor = conn.cursor()
+#cursor.execute("UPDATE users SET confirmed_at = %s where email = %s ;",(str(datetime.now()),'popoviczvonko@example.org',),)
+
+#conn.commit()
+
+#conn.close()
+
+
+#sql = "select id, account_id from statuses limit 10;"
+#sql = "select * from accounts limit 2;"
+#sql= "select id,email from users order by id limit 3;"
+
+cursor.execute("select account_id from users where email = %s;", ('popoviczvonko@example.org',))
+#it's a tuple I reckon
+id_result = cursor.fetchone()[0]
+print(id_result)
+cursor.execute("UPDATE accounts SET note = %s, display_name = %s where id = %s ;",
+(fake.text(),fake.name(),id_result,)
+,)
+#cursor.execute("select private_key from accounts where id = %s;", (id_result,))
+#cursor.execute(
+#        "insert into statuses (text, created_at, updated_at, account_id) values (%s,%s,%s,%s);",
+#            ("Test",
+#            str(datetime.now()),
+#            str(datetime.now()),
+#            '107919496499608303'),
+#)
+
+try:
+    for result in cursor.fetchall()[0]:
+        print(result)
+except Exception as e:
+    print('None')
+        # print(str(e))
+conn.close()
+
+
+#cursor.execute(
+#        "insert into statuses (text, created_at, updated_at, account_id) values (%s,%s,%s,%s);",
+#            ("Test",
+#            str(datetime.now()),
+#            str(datetime.now()),
+#            '107919496499608303'),
+#)
