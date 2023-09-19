@@ -1,5 +1,6 @@
 .env
 venv/
+env/
 all_code.txt
 .DS_Store
 app/__pycache__

@@ -1,20 +1,20 @@
 from mastodon import Mastodon
 import psycopg2
 from datetime import datetime
-from faker import Faker
+#from faker import Faker
 
-fake = Faker(['az_AZ', 'cs_CZ', 'da_DK', 'de_AT', 'de_CH', 'de_DE', 'el_GR', 'en_AU', 'en_CA', 'en_GB', 'en_IE', 'en_IN', 'en_NZ', 'en_PH', 'en_US', 'es_CO', 'es_ES', 'es_MX', 'fa_IR', 'fi_FI', 'fil_PH', 'fr_CH', 'fr_FR', 'he_IL', 'hi_IN', 'hr_HR', 'hu_HU', 'hy_AM', 'id_ID', 'it_IT', 'ja_JP', 'ka_GE', 'ko_KR', 'ne_NP', 'nl_BE', 'nl_NL', 'no_NO', 'pl_PL', 'pt_BR', 'pt_PT', 'ro_RO', 'ru_RU', 'sk_SK', 'sl_SI', 'sv_SE', 'ta_IN', 'th_TH', 'tl_PH', 'uk_UA', 'zh_CN', 'zh_TW'], use_weighting=False)
+#fake = Faker(['az_AZ', 'cs_CZ', 'da_DK', 'de_AT', 'de_CH', 'de_DE', 'el_GR', 'en_AU', 'en_CA', 'en_GB', 'en_IE', 'en_IN', 'en_NZ', 'en_PH', 'en_US', 'es_CO', 'es_ES', 'es_MX', 'fa_IR', 'fi_FI', 'fil_PH', 'fr_CH', 'fr_FR', 'he_IL', 'hi_IN', 'hr_HR', 'hu_HU', 'hy_AM', 'id_ID', 'it_IT', 'ja_JP', 'ka_GE', 'ko_KR', 'ne_NP', 'nl_BE', 'nl_NL', 'no_NO', 'pl_PL', 'pt_BR', 'pt_PT', 'ro_RO', 'ru_RU', 'sk_SK', 'sl_SI', 'sv_SE', 'ta_IN', 'th_TH', 'tl_PH', 'uk_UA', 'zh_CN', 'zh_TW'], use_weighting=False)
 
 #mastodon = Mastodon(
 #    client_id = 'pytooter_clientcred.secret',
 #    api_base_url = 'https://mastodon.xn--sft219bi3tzwd.com'
 #)
 
-#mastodon.log_in(
-#    'bram@xn--sft219bi3tzwd.com',
-#    'tye-enx8tgm5GZA5vhm',
-#    to_file = 'pytooter_usercred.secret'
-#)
+mastodon.log_in(
+    'bram@xn--sft219bi3tzwd.com',
+    'tye-enx8tgm5GZA5vhm',
+    to_file = 'pytooter_usercred.secret'
+)
 
 mastodon = Mastodon(
     access_token = 'pytooter_usercred.secret',
@@ -27,7 +27,7 @@ mastodon = Mastodon(
 #mastodon.update_credentials()
 
 
-conn = psycopg2.connect(host="192.168.1.50", database="mastodon_production", user="mastodon", password='NFd2Un1pi7mVD4SjXjkFY3wusLoGP8')
+conn = psycopg2.connect(host="192.168.1.136", database="mastodon_production", user="postgres", password='')
 conn.autocommit = True
 cursor = conn.cursor()
 #cursor.execute("UPDATE users SET confirmed_at = %s where email = %s ;",(str(datetime.now()),'popoviczvonko@example.org',),)
