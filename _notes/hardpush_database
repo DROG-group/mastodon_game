@@ -24,18 +24,83 @@ Usage:
 Set up the database configuration.
 Call insert_mastodon_data_from_csv with the path to your CSV file and the database configuration.
 Note: Direct database manipulation can bypass application-level checks and validations. Use with caution.
+
+CSV example.csv
+id,created_at,updated_at,account_username,text,interaction_type,in_reply_to_id,reblog_of_id,media_attachment_ids,visibility
+50,2023-09-12 13:00:00,2023-09-12 13:00:00,Ava,"They can take away our art, but they can't silence our voices. #Resistance 🎨🗣️",toot,Null,Null,"",0
+51,2023-09-12 13:05:00,2023-09-12 13:05:00,Viktor,Artistic expression poses a threat to societal order. It must be controlled. #Enforcers 🖌️🚫,reply,Null,Null,"",0
+52,2023-09-12 13:10:00,2023-09-12 13:10:00,Nora,Reporting on the regime's cultural oppression. We won't let them erase our identity. #FreedomOfExpression 📰💔,toot,Null,Null,"",0
+53,2023-09-12 13:15:00,2023-09-12 13:15:00,Ethan,They underestimate the power of creativity. We'll find ways to express ourselves in the shadows. #TechRevolution 💻🌑,toot,Null,Null,"",0
+54,2023-09-12 13:20:00,2023-09-12 13:20:00,Harper,The regime's art is the true reflection of our values. Anything else is dangerous. #Propaganda 📢🤐,toot,Null,Null,"",0
+56,2023-09-12 13:25:00,2023-09-12 13:25:00,Maya,Infiltrating the regime's art department. Uncovering their dark secrets. #SpyLife 🕵️‍♀️🔍,toot,Null,Null,"",0
+57,2023-09-12 13:30:00,2023-09-12 13:30:00,Leo,The Resistance will crumble under the weight of their own ideals. I've seen it firsthand. #Traitor 😈🔪,toot,Null,Null,"",0
+58,2023-09-12 13:35:00,2023-09-12 13:35:00,Felix,Resistance scum will pay for their defiance. Torture awaits them in our chambers. #Enforcers ⚡️😈,toot,Null,Null,"",0
+59,2023-09-12 13:40:00,2023-09-12 13:40:00,Riley,The sniper's bullet finds its mark. Regime targets eliminated one by one. #SilentJustice 🔫🎯,toot,Null,Null,"",0
+
+here's a breakdown of the CTE logic:
+user_check CTE: This checks if a user with the given username exists and returns their account_ID if they do.
+new_account CTE: This attempts to insert a new account with the given username and other details. 
+If an account with the same username (and domain, if provided) already exists, it performs a dummy update on the username (i.e., it sets the username to its current value). 
+Regardless of whether it's an insert or an update, it returns the account_ID.
+new_status CTE: This inserts a new status (toot) associated with the account ID determined in the previous steps. 
+It uses the COALESCE function to prioritize the account_ID from new_account (if a new account was created or an existing one was updated) and falls back to the account_ID from user_check if no new account was created. 
+This means a new status will be created whether the user is new or already exists.
+new_user CTE: This inserts a new user associated with the account ID determined in the previous steps. 
+Similar to the new_status CTE, it uses the COALESCE function to determine the account_ID.
+Final SELECT: This returns the IDs of the newly created or updated account and the newly created status, each with a type label ('account' or 'status').
+
 '''
 
+import psycopg2
+import csv
+
 def push_data_to_db(row, cur):
+    for key, value in row.items():
+        if value == 'Null':
+            row[key] = None
+    # CSV to SQL hates Nulls so we have to clean them
     # SQL CTE to insert data
     sql = """
-    WITH user_check AS (SELECT id AS account_ID FROM accounts WHERE username = %(account_username)s),
-    new_account AS (INSERT INTO accounts (username, created_at, updated_at) VALUES (%(account_username)s, %(created_at)s, %(updated_at)s) WHERE NOT EXISTS (SELECT 1 FROM user_check) RETURNING id AS account_ID),
-    new_status AS (INSERT INTO statuses (account_id, text, created_at, updated_at, in_reply_to_id, reblog_of_id, visibility) VALUES (COALESCE((SELECT account_ID FROM new_account), (SELECT account_ID FROM user_check)), %(text)s, %(created_at)s, %(updated_at)s, %(in_reply_to_id)s, %(reblog_of_id)s, %(visibility)s) RETURNING id AS status_id)
-    SELECT status_id FROM new_status;
-    """
+        WITH user_check AS (
+            SELECT id AS account_ID 
+            FROM accounts 
+            WHERE username = %(account_username)s
+        ),
+       new_account AS (
+            INSERT INTO accounts (username, public_key, created_at, updated_at, note, display_name) 
+            VALUES (%(account_username)s, 1, '2003-01-01', '2003-01-01', 'TXT', %(account_username)s) 
+                ON CONFLICT (lower(username), COALESCE(lower(domain), ''))
+                DO UPDATE SET username=EXCLUDED.username
+            RETURNING id AS account_ID
+        ),
+        new_status AS (
+            INSERT INTO statuses (account_id, text, created_at, updated_at, visibility, in_reply_to_id, reblog_of_id) 
+            VALUES (
+                COALESCE((SELECT account_ID FROM new_account), (SELECT account_ID FROM user_check)), 
+                %(text)s, 
+                '2003-01-01', 
+                '2003-01-01', 
+                %(visibility)s,
+                %(in_reply_to_id)s, 
+                %(reblog_of_id)s
+            ) 
+            RETURNING id AS status_id
+        ),
+        new_user AS (
+            INSERT INTO users (email, account_id, created_at, updated_at, confirmed_at)
+            VALUES (gen_random_uuid(), COALESCE((SELECT account_ID FROM new_account), (SELECT account_ID FROM user_check)), '2003-01-01', '2003-01-01', '2003-01-01')
+        )
+        SELECT account_ID AS id, 'account' AS type FROM new_account
+            UNION ALL
+        SELECT status_id AS id, 'status' AS type FROM new_status;
+        """
     # Execute the SQL
     cur.execute(sql, row)
+    results = cur.fetchall()
+    ids = {id_type: id_value for id_value, id_type in results}
+    account_id = ids.get('account', 'DefaultAccountValue')
+    status_id = ids.get('status', 'DefaultStatusValue')
+    return account_id, status_id
 
 def insert_mastodon_data_from_csv(csv_path, db_config):
     # Connect to the database
@@ -46,9 +111,43 @@ def insert_mastodon_data_from_csv(csv_path, db_config):
     with open(csv_path, 'r') as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
-            push_data_to_db(row, cur)
+            account_id, status_id = push_data_to_db(row, cur)
+            #Push Avatars 
+            #Refactor reply_to_id in rest of the code...
+            print(f"Account ID: {account_id}, Status ID: {status_id}")
             conn.commit()
 
     # Close the database connection
     cur.close()
-   
+    conn.close()
+
+def clean_csv_data(input_path, output_path):
+    cleaned_data = []
+    print("hello")
+    with open(input_path, 'r') as csv_file:
+        reader = csv.DictReader(csv_file)
+        for row in reader:
+            # Convert empty strings to None for integer fields
+            for field in ['id', 'in_reply_to_id', 'reblog_of_id']:
+                if not row[field]:
+                    row[field] = Null
+            cleaned_data.append(row)
+
+    # Write cleaned data to a new CSV
+    with open(output_path, 'w', newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=cleaned_data[0].keys())
+        writer.writeheader()
+        writer.writerows(cleaned_data)
+
+# Example usage
+clean_csv_data('_notes/example.csv', '_notes/example.csv')
+
+# Example usage:
+db_config = {
+    'dbname': 'mastodon_production',
+    'user': 'mastodon',
+    'password': '',
+    'host': '127.0.0.1',
+    'port': '5432'
+}
+insert_mastodon_data_from_csv('_notes/example.csv', db_config)
