@@ -78,7 +78,8 @@ def push_data_to_db(row, cur):
             VALUES (
                 COALESCE((SELECT account_ID FROM new_account), (SELECT account_ID FROM user_check)), 
                 %(text)s, 
-                '2003-01-01', 
+                %(created_at)s, 
+                %(updated_at)s, 
                 '2003-01-01', 
                 %(visibility)s,
                 %(in_reply_to_id)s, 
