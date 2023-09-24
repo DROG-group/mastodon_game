@@ -2,7 +2,7 @@
 Mastodon Avatar API
 ===================
 
-This API provides endpoints to manage Mastodon avatars.
+This API provides endpoints to manage Mastodon avatars through a file service API instead of an Mastodon (throttled) API. 
 
 Systemd Service Setup:
 ----------------------

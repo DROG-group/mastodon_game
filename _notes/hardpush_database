@@ -215,38 +215,6 @@ def insert_mastodon_data_from_csv(csv_path, db_config):
     conn.close()
 
 
-def select_random_avatar(avatar_dir):
-    """Select a random avatar from a directory."""
-    return random.choice([os.path.join(avatar_dir, f) for f in os.listdir(avatar_dir) if os.path.isfile(os.path.join(avatar_dir, f))])
-
-def resize_image(input_path, output_path, size=(128,128)):
-    """Resize an image to the specified size."""
-    image = Image.open(input_path)
-    image = image.resize(size, Image.ANTIALIAS)
-    image.save(output_path)
-
-def construct_avatar_path(base_dir, account_id):
-    """Construct the path for the avatar based on the account_id."""
-    id_str = str(account_id)
-    path_components = [base_dir, 'system', 'accounts', 'avatars']
-    
-    # Split account_id into chunks of 3 digits and add to path components
-    for i in range(0, len(id_str), 3):
-        path_components.append(id_str[i:i+3])
-    
-    path_components.append('original')
-    path_components.append('avatar.png')
-    
-    return os.path.join(*path_components)
-
-def avatar_pusher(account_id, avatar_dir, output_base_dir):
-    """Push a randomly selected avatar for a given account ID."""
-    selected_avatar = select_random_avatar(avatar_dir)
-    output_avatar_path = construct_avatar_path(output_base_dir, account_id)
-    os.makedirs(os.path.dirname(output_avatar_path), exist_ok=True) # Ensure directories exist
-    resize_image(selected_avatar, output_avatar_path)
-    return output_avatar_path 
-
 def clean_csv_data(input_path, output_path):
     cleaned_data = []
     print("Importing data...")
