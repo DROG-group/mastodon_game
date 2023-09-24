@@ -1,7 +1,7 @@
 id,created_at,updated_at,account_username,text,interaction_type,in_reply_to_id,reblog_of_id,media_attachment_ids,visibility
 50,2023-09-12 13:00:00,2023-09-12 13:00:00,Ava,"They can take away our art, but they can't silence our voices. #Resistance 🎨🗣️",toot,Null,Null,,0
-51,2023-09-12 13:05:00,2023-09-12 13:05:00,Viktor,Artistic expression poses a threat to societal order. It must be controlled. #Enforcers 🖌️🚫,reply,Null,Null,,0
-52,2023-09-12 13:10:00,2023-09-12 13:10:00,Nora,Reporting on the regime's cultural oppression. We won't let them erase our identity. #FreedomOfExpression 📰💔,toot,Null,Null,,0
+51,2023-09-12 13:05:00,2023-09-12 13:05:00,Viktor,Artistic expression poses a threat to societal order. It must be controlled. #Enforcers 🖌️🚫,reply,50,Null,,0
+52,2023-09-12 13:10:00,2023-09-12 13:10:00,Nora,Reporting on the regime's cultural oppression. We won't let them erase our identity. #FreedomOfExpression 📰💔,reply,50,Null,,0
 53,2023-09-12 13:15:00,2023-09-12 13:15:00,Ethan,They underestimate the power of creativity. We'll find ways to express ourselves in the shadows. #TechRevolution 💻🌑,toot,Null,Null,,0
 54,2023-09-12 13:20:00,2023-09-12 13:20:00,Harper,The regime's art is the true reflection of our values. Anything else is dangerous. #Propaganda 📢🤐,toot,Null,Null,,0
 56,2023-09-12 13:25:00,2023-09-12 13:25:00,Maya,Infiltrating the regime's art department. Uncovering their dark secrets. #SpyLife 🕵️‍♀️🔍,toot,Null,Null,,0

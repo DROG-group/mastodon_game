@@ -1,4 +1,7 @@
 import csv
+#from PIL import Image
+#import os
+#import random
 import psycopg2
 
 '''
@@ -28,7 +31,7 @@ Note: Direct database manipulation can bypass application-level checks and valid
 CSV example.csv
 id,created_at,updated_at,account_username,text,interaction_type,in_reply_to_id,reblog_of_id,media_attachment_ids,visibility
 50,2023-09-12 13:00:00,2023-09-12 13:00:00,Ava,"They can take away our art, but they can't silence our voices. #Resistance 🎨🗣️",toot,Null,Null,"",0
-51,2023-09-12 13:05:00,2023-09-12 13:05:00,Viktor,Artistic expression poses a threat to societal order. It must be controlled. #Enforcers 🖌️🚫,reply,Null,Null,"",0
+51,2023-09-12 13:05:00,2023-09-12 13:05:00,Viktor,Artistic expression poses a threat to societal order. It must be controlled. #Enforcers 🖌️🚫,reply,50,Null,"",0
 52,2023-09-12 13:10:00,2023-09-12 13:10:00,Nora,Reporting on the regime's cultural oppression. We won't let them erase our identity. #FreedomOfExpression 📰💔,toot,Null,Null,"",0
 53,2023-09-12 13:15:00,2023-09-12 13:15:00,Ethan,They underestimate the power of creativity. We'll find ways to express ourselves in the shadows. #TechRevolution 💻🌑,toot,Null,Null,"",0
 54,2023-09-12 13:20:00,2023-09-12 13:20:00,Harper,The regime's art is the true reflection of our values. Anything else is dangerous. #Propaganda 📢🤐,toot,Null,Null,"",0
@@ -50,51 +53,99 @@ Similar to the new_status CTE, it uses the COALESCE function to determine the ac
 Final SELECT: This returns the IDs of the newly created or updated account and the newly created status, each with a type label ('account' or 'status').
 
 '''
+account_id = 111093256093960762 #dummy
+avatar_dir = 'path_to_folder_with_avatars' # Replace with your actual path
+output_base_dir = '~/live/public' # Starting point of the path
 
-import psycopg2
-import csv
 
 def push_data_to_db(row, cur):
     for key, value in row.items():
         if value == 'Null':
             row[key] = None
-    # CSV to SQL hates Nulls so we have to clean them
     # SQL CTE to insert data
     sql = """
-        WITH user_check AS (
-            SELECT id AS account_ID 
-            FROM accounts 
-            WHERE username = %(account_username)s
-        ),
-       new_account AS (
-            INSERT INTO accounts (username, public_key, created_at, updated_at, note, display_name) 
-            VALUES (%(account_username)s, 1, '2003-01-01', '2003-01-01', 'TXT', %(account_username)s) 
-                ON CONFLICT (lower(username), COALESCE(lower(domain), ''))
-                DO UPDATE SET username=EXCLUDED.username
-            RETURNING id AS account_ID
-        ),
-        new_status AS (
-            INSERT INTO statuses (account_id, text, created_at, updated_at, visibility, in_reply_to_id, reblog_of_id) 
-            VALUES (
-                COALESCE((SELECT account_ID FROM new_account), (SELECT account_ID FROM user_check)), 
-                %(text)s, 
-                %(created_at)s, 
-                %(updated_at)s, 
-                %(visibility)s,
-                %(in_reply_to_id)s, 
-                %(reblog_of_id)s
-            ) 
-            RETURNING id AS status_id
-        ),
-        new_user AS (
-            INSERT INTO users (email, account_id, created_at, updated_at, confirmed_at)
-            VALUES (gen_random_uuid(), COALESCE((SELECT account_ID FROM new_account), (SELECT account_ID FROM user_check)), '2003-01-01', '2003-01-01', '2003-01-01')
-        )
-        SELECT account_ID AS id, 'account' AS type FROM new_account
-            UNION ALL
-        SELECT status_id AS id, 'status' AS type FROM new_status;
+        WITH 
+            user_check AS (
+                SELECT id AS account_ID 
+                FROM accounts 
+                WHERE username = %(account_username)s
+            ),
+            new_account AS (
+                INSERT INTO accounts (username, public_key, created_at, updated_at, note, display_name) 
+                VALUES (REPLACE(%(account_username)s, ' ', '_'), 1, '2003-01-01', '2003-01-01', 'TXT', %(account_username)s) 
+                    ON CONFLICT (lower(username), COALESCE(lower(domain), ''))
+                    DO UPDATE SET username=EXCLUDED.username
+                RETURNING id AS account_ID
+            ),
+            new_status AS (
+                INSERT INTO statuses (account_id, text, created_at, updated_at, visibility, in_reply_to_id, reblog_of_id, reply, language) 
+                VALUES (
+                    COALESCE((SELECT account_ID FROM new_account), (SELECT account_ID FROM user_check)), 
+                    %(text)s, 
+                    %(created_at)s, 
+                    %(updated_at)s, 
+                    %(visibility)s,
+                    CASE 
+                        WHEN CAST(%(in_reply_to_id)s AS TEXT) = 'Null' THEN NULL 
+                        ELSE COALESCE((SELECT mastodon_id FROM id_mapping WHERE csv_id = CAST(%(in_reply_to_id)s AS INTEGER)), NULL) 
+                    END,
+                    CASE 
+                        WHEN CAST(%(in_reply_to_id)s AS TEXT) = 'Null' THEN NULL 
+                        ELSE COALESCE((SELECT mastodon_id FROM id_mapping WHERE csv_id = CAST(%(reblog_of_id)s AS INTEGER)), NULL) 
+                    END,
+                    CASE WHEN COALESCE(%(in_reply_to_id)s, 'NULL_VALUE') != 'NULL_VALUE' THEN TRUE ELSE FALSE END,
+                    'en'
+                )
+                RETURNING id AS status_id
+            ),
+            mapping AS (
+                INSERT INTO id_mapping (csv_id, mastodon_id)
+                VALUES (%(id)s, (SELECT status_id FROM new_status))
+                RETURNING mastodon_id
+            ),
+            new_status_stats AS (
+                INSERT INTO status_stats (status_id, replies_count, reblogs_count, favourites_count, created_at, updated_at)
+                SELECT
+                    -- Determine which status ID we should be updating stats for
+                    CASE 
+                        WHEN %(in_reply_to_id)s IS NOT NULL THEN COALESCE((SELECT mastodon_id FROM id_mapping WHERE csv_id = CAST(%(in_reply_to_id)s AS INTEGER)), NULL)
+                        WHEN %(reblog_of_id)s IS NOT NULL THEN COALESCE((SELECT mastodon_id FROM id_mapping WHERE csv_id = CAST(%(reblog_of_id)s AS INTEGER)), NULL)
+                        ELSE NULL
+                    END,
+                    CASE WHEN %(in_reply_to_id)s IS NOT NULL THEN 1 ELSE 0 END,  -- Increment reply count if in_reply_to_id is not null
+                    CASE WHEN %(reblog_of_id)s IS NOT NULL THEN 1 ELSE 0 END,   -- Increment reblog count if reblog_of_id is not null
+                    0,  -- Initial value for favourites_count
+                    NOW(),
+                    NOW()
+                WHERE 
+                    (COALESCE((SELECT mastodon_id FROM id_mapping WHERE csv_id = CAST(%(in_reply_to_id)s AS INTEGER)), NULL) IS NOT NULL)
+                    OR
+                    (COALESCE((SELECT mastodon_id FROM id_mapping WHERE csv_id = CAST(%(reblog_of_id)s AS INTEGER)), NULL) IS NOT NULL)
+                ON CONFLICT (status_id) 
+                DO UPDATE SET 
+                    replies_count = status_stats.replies_count + EXCLUDED.replies_count,
+                    reblogs_count = status_stats.reblogs_count + EXCLUDED.reblogs_count,
+                    favourites_count = status_stats.favourites_count + EXCLUDED.favourites_count,
+                    updated_at = NOW()
+                WHERE 
+                    (EXCLUDED.replies_count = 1) OR (EXCLUDED.reblogs_count = 1)
+            ),
+           new_user AS (
+                INSERT INTO users (email, account_id, created_at, updated_at, confirmed_at, time_zone)
+                SELECT 
+                    gen_random_uuid(), 
+                    (SELECT account_ID FROM new_account), 
+                    '2003-01-01', 
+                    '2003-01-01', 
+                    '2003-01-01',
+                    'Europe/Amsterdam'
+                WHERE NOT EXISTS (SELECT 1 FROM user_check)
+            )
+            SELECT account_ID AS id, 'account' AS type FROM new_account
+                UNION ALL
+            SELECT status_id AS id, 'status' AS type FROM new_status;
         """
-    # Execute the SQL
+        # Execute the SQL
     cur.execute(sql, row)
     results = cur.fetchall()
     ids = {id_type: id_value for id_value, id_type in results}
@@ -102,8 +153,50 @@ def push_data_to_db(row, cur):
     status_id = ids.get('status', 'DefaultStatusValue')
     return account_id, status_id
 
+def ensure_id_mapping_table_exists(db_config):
+    """
+    Ensures that the id_mapping table exists and is empty.
+    If the table exists, it truncates it. If it doesn't, it creates it.
+
+    The `id_mapping` table serves as an essential bridge between the original CSV data and the Mastodon database:
+    1. **ID Mismatch**: Mastodon may assign new auto-incremented IDs different from the original CSV IDs.
+    2. **Maintain Relationships**: Fields in the CSV, like `in_reply_to_id`, refer to other records. We need to update these references with new Mastodon IDs to preserve relationships.
+    3. **Avoid Duplications**: If importing data multiple times, the mapping table helps identify already imported records and prevents duplications.
+    4. **Data Auditing**: After data insertion, the table assists in verifying the migration by mapping Mastodon IDs back to their original CSV IDs.
+
+    The function `ensure_id_mapping_table_exists` ensures that this table is ready for each import, either by truncating existing data or creating the table if it doesn't exist.    
+    Parameters:
+    - db_config: Dictionary containing database connection parameters.
+    """
+    
+    # PL/pgSQL block to ensure the id_mapping table exists and is empty
+    sql = """
+    DO $$
+    BEGIN
+        -- If the table exists, truncate it
+        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'id_mapping') THEN
+            TRUNCATE TABLE id_mapping;
+        ELSE
+            -- If the table doesn't exist, create it
+            CREATE TABLE id_mapping (
+                csv_id INT PRIMARY KEY,
+                mastodon_id BIGINT
+            );
+        END IF;
+    END $$;
+    """
+    
+    # Connect to the database and execute the SQL
+    conn = psycopg2.connect(**db_config)
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+    cur.close()
+    conn.close()
+
 def insert_mastodon_data_from_csv(csv_path, db_config):
     # Connect to the database
+    ensure_id_mapping_table_exists(db_config)
     conn = psycopg2.connect(**db_config)
     cur = conn.cursor()
 
@@ -112,7 +205,7 @@ def insert_mastodon_data_from_csv(csv_path, db_config):
         reader = csv.DictReader(csv_file)
         for row in reader:
             account_id, status_id = push_data_to_db(row, cur)
-            #Push Avatars 
+            # saved_avatar_path = avatar_pusher(account_id, avatar_dir, output_base_dir)
             #Refactor reply_to_id in rest of the code...
             print(f"Account ID: {account_id}, Status ID: {status_id}")
             conn.commit()
@@ -121,9 +214,42 @@ def insert_mastodon_data_from_csv(csv_path, db_config):
     cur.close()
     conn.close()
 
+
+def select_random_avatar(avatar_dir):
+    """Select a random avatar from a directory."""
+    return random.choice([os.path.join(avatar_dir, f) for f in os.listdir(avatar_dir) if os.path.isfile(os.path.join(avatar_dir, f))])
+
+def resize_image(input_path, output_path, size=(128,128)):
+    """Resize an image to the specified size."""
+    image = Image.open(input_path)
+    image = image.resize(size, Image.ANTIALIAS)
+    image.save(output_path)
+
+def construct_avatar_path(base_dir, account_id):
+    """Construct the path for the avatar based on the account_id."""
+    id_str = str(account_id)
+    path_components = [base_dir, 'system', 'accounts', 'avatars']
+    
+    # Split account_id into chunks of 3 digits and add to path components
+    for i in range(0, len(id_str), 3):
+        path_components.append(id_str[i:i+3])
+    
+    path_components.append('original')
+    path_components.append('avatar.png')
+    
+    return os.path.join(*path_components)
+
+def avatar_pusher(account_id, avatar_dir, output_base_dir):
+    """Push a randomly selected avatar for a given account ID."""
+    selected_avatar = select_random_avatar(avatar_dir)
+    output_avatar_path = construct_avatar_path(output_base_dir, account_id)
+    os.makedirs(os.path.dirname(output_avatar_path), exist_ok=True) # Ensure directories exist
+    resize_image(selected_avatar, output_avatar_path)
+    return output_avatar_path 
+
 def clean_csv_data(input_path, output_path):
     cleaned_data = []
-    print("hello")
+    print("Importing data...")
     with open(input_path, 'r') as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
@@ -140,7 +266,7 @@ def clean_csv_data(input_path, output_path):
         writer.writerows(cleaned_data)
 
 # Example usage
-clean_csv_data('_notes/example.csv', '_notes/example.csv')
+#clean_csv_data('_notes/example.csv', '_notes/example.csv')
 
 # Example usage:
 db_config = {
